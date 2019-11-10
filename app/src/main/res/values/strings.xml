@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">LocationRecord</string>
+    <string name="btn_get_location">开启定位服务</string>
+    <string name="btn_stop_location">停止定位服务</string>
+    <string name="btn_get_location_data">获取定位数据</string>
+    <string name="btn_clear_data">清空定位数据</string>
 </resources>
