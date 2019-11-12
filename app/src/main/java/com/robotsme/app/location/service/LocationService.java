@@ -48,6 +48,11 @@ public class LocationService extends Service {
                         String nowTimeStamp = String.valueOf(System.currentTimeMillis());
                         editor.putString(nowTimeStamp, aMapLocation.toStr());
                         editor.apply();
+                        int size = sharedPreferences.getAll().size();
+                        Log.e(TAG, "size : " + size);
+                    } else {
+                        Log.e(TAG, "errcode: " + aMapLocation.getErrorCode());
+                        Log.e(TAG, "errinfo: " + aMapLocation.getErrorInfo());
                     }
                 }
             }
