@@ -30,19 +30,28 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.amap.api.maps2d.model.Polyline;
+import com.amap.api.maps2d.model.PolylineOptions;
+import com.robotsme.app.location.bean.LocationBean;
 import com.robotsme.app.location.service.LocationBinder;
 import com.robotsme.app.location.service.LocationService;
 import com.robotsme.app.location.utils.MLog;
+import com.zsd.android.dblib.db.BaseDao;
+import com.zsd.android.dblib.db.BaseDaoFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements AMapLocationListener, LocationSource, AMap.OnCameraChangeListener {
+public class MainActivity extends AppCompatActivity implements LocationSource, AMap.OnCameraChangeListener, LocationService.OnLocationChangeListener {
 
     private MapView mMapView;
 
     private final int PERMISSION_LOCATION_CODE = 101;
     private AMap mGDMap;
     private LocationSource.OnLocationChangedListener locationChangedListener;
+    private BaseDao<LocationBean> locationDao;
+    private ArrayList<LatLng> latLngs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +59,17 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         setContentView(R.layout.activity_main);
         initMap(savedInstanceState);
         startLocateService();
+        locationDao = BaseDaoFactory.getInstance().getDao(LocationBean.class);
+        List<LocationBean> locationInfos = locationDao.query(new LocationBean());
+        latLngs = new ArrayList<>();
+        if (locationInfos != null && locationInfos.size() > 0) {
+            LatLng ll = null;
+            for (LocationBean locationInfo : locationInfos) {
+                ll = new LatLng(locationInfo.getLat(), locationInfo.getLng());
+                latLngs.add(ll);
+            }
+            mGDMap.addPolyline(new PolylineOptions().addAll(latLngs).width(5).color(ActivityCompat.getColor(this, R.color.colorAccent)));
+        }
     }
 
     private void initMap(Bundle savedInstanceState) {
@@ -60,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
         mGDMap.setOnCameraChangeListener(this);
         MyLocationStyle myLocationStyle = new MyLocationStyle();
         myLocationStyle.showMyLocation(true);
-        myLocationStyle.interval(2000); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+        myLocationStyle.interval(1000 * 60 * 5); //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);//连续定位、蓝点不会移动到地图中心点，并且蓝点会跟随设备移动。
         mGDMap.setMyLocationStyle(myLocationStyle);
         mGDMap.setMyLocationEnabled(true);
@@ -79,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             public void onServiceConnected(ComponentName name, IBinder service) {
                 LocationBinder binder = (LocationBinder) service;
                 LocationService locationService = binder.getService();
-                locationService.setLocationListener(MainActivity.this);
+                locationService.setOnLocationChangeListener(MainActivity.this);
             }
 
             @Override
@@ -134,6 +154,10 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
             if (aMapLocation.getErrorCode() == 0) {
                 mGDMap.moveCamera(CameraUpdateFactory.zoomTo(18));
                 locationChangedListener.onLocationChanged(aMapLocation);
+                LatLng ll = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                latLngs.add(ll);
+                mGDMap.clear();
+                mGDMap.addPolyline(new PolylineOptions().addAll(latLngs).width(5).color(ActivityCompat.getColor(this, R.color.colorAccent)));
             }
         }
     }
@@ -155,6 +179,11 @@ public class MainActivity extends AppCompatActivity implements AMapLocationListe
 
     @Override
     public void onCameraChangeFinish(CameraPosition cameraPosition) {
+
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
 
     }
 }

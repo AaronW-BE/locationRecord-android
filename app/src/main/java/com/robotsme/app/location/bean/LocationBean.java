@@ -1,19 +1,38 @@
 package com.robotsme.app.location.bean;
 
-//@DbTable("tb_location")
+import com.zsd.android.dblib.annotation.DbField;
+import com.zsd.android.dblib.annotation.DbTable;
+
+@DbTable("tb_location")
 public class LocationBean {
 
-//    @DbField("_id")
-    private long id;
+    @DbField(value = "_id", primaryKey = true)
+    private int id;
     private double lat;
     private double lng;
-//    @DbField("create_time")
+    @DbField("create_time")
     private long time;
     private String province;
     private String city;
     private String area;
     private String street;
     private String strAd;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
 
     public double getLat() {
         return lat;

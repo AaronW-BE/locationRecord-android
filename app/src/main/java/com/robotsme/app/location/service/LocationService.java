@@ -5,19 +5,25 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.robotsme.app.location.bean.LocationBean;
 import com.robotsme.app.location.utils.MLog;
+import com.zsd.android.dblib.db.BaseDao;
+import com.zsd.android.dblib.db.BaseDaoFactory;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class LocationService extends Service {
+public class LocationService extends Service implements AMapLocationListener {
 
     public AMapLocationClient locationClient;
     private LocationBinder locationBinder;
+    private OnLocationChangeListener onLocationChangeListener;
+    private BaseDao<LocationBean> locationDao;
 
     public LocationService() {
 
@@ -32,6 +38,7 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        locationDao = BaseDaoFactory.getInstance().getDao(LocationBean.class);
         startLocation();
     }
 
@@ -42,9 +49,8 @@ public class LocationService extends Service {
 
     @Override
     public void onDestroy() {
-        locationClient.stopLocation();
-        locationClient = null;
         super.onDestroy();
+        destroyLocation();
     }
 
     /**
@@ -55,6 +61,7 @@ public class LocationService extends Service {
         //定位服务的客户端。宿主程序在客户端声明此类，并调用，目前只支持在主线程中启动
         if (locationClient == null) {
             locationClient = new AMapLocationClient(getApplicationContext());
+            locationClient.setLocationListener(this);
         }
         //声明LocationClient类实例并配置定位参数
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
@@ -64,18 +71,18 @@ public class LocationService extends Service {
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         //获取一次定位结果：
         //该方法默认为false。
-        mLocationOption.setOnceLocation(true);
+        mLocationOption.setOnceLocation(false);
         //获取最近3s内精度最高的一次定位结果：
         //设置setOnceLocationLatest(boolean b)接口为true，启动定位时SDK会返回最近3s内精度最高的一次定位结果。如果设置其为true，setOnceLocation(boolean b)接口也会被设置为true，反之不会，默认为false。
         mLocationOption.setOnceLocationLatest(true);
         //设置定位间隔,单位毫秒,默认为2000ms，最低1000ms。
-        mLocationOption.setInterval(5000);
+        mLocationOption.setInterval(1000 * 60 * 5);
         //设置是否返回地址信息（默认返回地址信息）
         mLocationOption.setNeedAddress(true);
         //设置是否允许模拟位置,默认为true，允许模拟位置
         mLocationOption.setMockEnable(true);
         //单位是毫秒，默认30000毫秒，建议超时时间不要低于8000毫秒。
-        mLocationOption.setHttpTimeOut(20000);
+        mLocationOption.setHttpTimeOut(10000);
         //缓存机制
         mLocationOption.setLocationCacheEnable(false);
         if (null != locationClient) {
@@ -86,10 +93,43 @@ public class LocationService extends Service {
         }
     }
 
-    public void setLocationListener(AMapLocationListener listener) {
-        if (locationClient == null) {
-            locationClient = new AMapLocationClient(getApplicationContext());
+    private void destroyLocation() {
+        if (null != locationClient) {
+            locationClient.disableBackgroundLocation(true);
+            locationClient.stopLocation();
+            locationClient.unRegisterLocationListener(this);
+            locationClient.onDestroy();
+            locationClient = null;
         }
-        locationClient.setLocationListener(listener);
+    }
+
+    @Override
+    public void onLocationChanged(AMapLocation aMapLocation) {
+        if (aMapLocation != null) {
+            if (aMapLocation.getErrorCode() == 0) {
+                LocationBean bean = new LocationBean();
+                bean.setProvince(aMapLocation.getProvince());
+                bean.setCity(aMapLocation.getCity());
+                bean.setArea(aMapLocation.getDistrict());
+                bean.setStreet(aMapLocation.getStreet());
+                bean.setLat(aMapLocation.getLatitude());
+                bean.setLng(aMapLocation.getLongitude());
+                bean.setTime(System.currentTimeMillis());
+                locationDao.insert(bean);
+                MLog.i(aMapLocation.getDistrict());
+                if (onLocationChangeListener != null) {
+                    onLocationChangeListener.onLocationChanged(aMapLocation);
+                }
+            }
+        }
+    }
+
+    public void setOnLocationChangeListener(OnLocationChangeListener onLocationChangeListener) {
+        this.onLocationChangeListener = onLocationChangeListener;
+    }
+
+    public interface OnLocationChangeListener {
+
+        void onLocationChanged(AMapLocation aMapLocation);
     }
 }
