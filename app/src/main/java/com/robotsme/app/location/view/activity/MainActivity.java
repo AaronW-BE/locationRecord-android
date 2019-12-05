@@ -1,6 +1,7 @@
-package com.robotsme.app.location;
+package com.robotsme.app.location.view.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -10,19 +11,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
@@ -30,20 +23,19 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
-import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.robotsme.app.location.R;
 import com.robotsme.app.location.bean.LocationBean;
+import com.robotsme.app.location.presenter.BasePresenter;
 import com.robotsme.app.location.service.LocationBinder;
 import com.robotsme.app.location.service.LocationService;
-import com.robotsme.app.location.utils.MLog;
 import com.zsd.android.dblib.db.BaseDao;
 import com.zsd.android.dblib.db.BaseDaoFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements LocationSource, AMap.OnCameraChangeListener, LocationService.OnLocationChangeListener {
+public class MainActivity extends BaseActivity implements LocationSource, AMap.OnCameraChangeListener, LocationService.OnLocationChangeListener {
 
     private MapView mMapView;
 
@@ -54,9 +46,17 @@ public class MainActivity extends AppCompatActivity implements LocationSource, A
     private ArrayList<LatLng> latLngs;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    protected int layoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected BasePresenter initPresenter() {
+        return null;
+    }
+
+    @Override
+    protected void initView(@Nullable Bundle savedInstanceState) {
         initMap(savedInstanceState);
         startLocateService();
         locationDao = BaseDaoFactory.getInstance().getDao(LocationBean.class);
