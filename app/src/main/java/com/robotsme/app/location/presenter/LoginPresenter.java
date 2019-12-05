@@ -1,6 +1,10 @@
 package com.robotsme.app.location.presenter;
 
+import com.robotsme.app.location.bean.BaseEntity;
+import com.robotsme.app.location.bean.LoginBean;
 import com.robotsme.app.location.model.LoginModel;
+import com.robotsme.app.location.utils.GsonUtil;
+import com.robotsme.app.location.utils.MLog;
 import com.robotsme.app.location.view.ILoginView;
 
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +43,8 @@ public class LoginPresenter extends BasePresenter<ILoginView, LoginModel> {
                 }
                 if (response.isSuccessful()) {
                     String jsonStr = response.body().string();
+                    BaseEntity<LoginBean> loginBeanBaseEntity = GsonUtil.parseBaseEntity(jsonStr, LoginBean.class);
+                    getView().showViewLogin(loginBeanBaseEntity.getData().getToken());
                 }
             }
         });

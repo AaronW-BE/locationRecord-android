@@ -7,10 +7,11 @@ public class SharedPreferencesUtil {
 
     private static volatile SharedPreferencesUtil instance;
     private Context context;
-    private SharedPreferences preferences;
+    private SharedPreferences sp;
 
     private SharedPreferencesUtil(Context context) {
         this.context = context;
+        sp = context.getSharedPreferences("location_record_config", Context.MODE_PRIVATE);
     }
 
     public static SharedPreferencesUtil getInstance(Context mContext) {
@@ -26,7 +27,11 @@ public class SharedPreferencesUtil {
         return spu;
     }
 
-    public void getSharedPreference(String key) {
-        preferences = context.getSharedPreferences(key, 0);
+
+    public void putToken(String token) {
+        sp.edit().putString("token", token).apply();
+    }
+    public String getToken() {
+        return sp.getString("token", "");
     }
 }

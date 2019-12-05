@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.KeyEvent;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
@@ -24,6 +25,7 @@ import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.model.PolylineOptions;
+import com.robotsme.app.location.BaseApplication;
 import com.robotsme.app.location.R;
 import com.robotsme.app.location.bean.LocationBean;
 import com.robotsme.app.location.presenter.BasePresenter;
@@ -44,6 +46,7 @@ public class MainActivity extends BaseActivity implements LocationSource, AMap.O
     private LocationSource.OnLocationChangedListener locationChangedListener;
     private BaseDao<LocationBean> locationDao;
     private ArrayList<LatLng> latLngs;
+    private long exitTime;
 
     @Override
     protected int layoutId() {
@@ -185,5 +188,21 @@ public class MainActivity extends BaseActivity implements LocationSource, AMap.O
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                long currentTimeMillis = System.currentTimeMillis();
+                if (currentTimeMillis - exitTime >= 2000) {
+                    showToast("在按一次退出程序");
+                    exitTime = currentTimeMillis;
+                } else {
+                    BaseApplication.killAll();
+                }
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
