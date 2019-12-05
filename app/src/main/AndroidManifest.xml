@@ -26,10 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".views.LoginActivity"></activity>
+
         <service
             android:name=".service.LocationService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -41,7 +43,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="cd19098050f993401b7543792805b2b8"></meta-data>
+            android:value="cd19098050f993401b7543792805b2b8" />
 
         <service android:name="com.amap.api.location.APSService" />
     </application>
