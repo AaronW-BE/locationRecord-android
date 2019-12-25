@@ -9,8 +9,10 @@ public class ToastUtil {
         try {
             Toast.makeText(context, string, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
+            e.printStackTrace();
             Looper.prepare();
             Toast.makeText(context, string, Toast.LENGTH_LONG).show();
-            Looper.loop();}
+            Looper.loop();
+        }
     }
 }

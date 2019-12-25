@@ -12,17 +12,10 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.LocationSource;
@@ -30,18 +23,16 @@ import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.CameraPosition;
 import com.amap.api.maps2d.model.LatLng;
 import com.amap.api.maps2d.model.MyLocationStyle;
-import com.amap.api.maps2d.model.Polyline;
 import com.amap.api.maps2d.model.PolylineOptions;
 import com.robotsme.app.location.bean.LocationBean;
 import com.robotsme.app.location.service.LocationBinder;
 import com.robotsme.app.location.service.LocationService;
-import com.robotsme.app.location.utils.MLog;
+import com.robotsme.app.location.views.LoginActivity;
 import com.zsd.android.dblib.db.BaseDao;
 import com.zsd.android.dblib.db.BaseDaoFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements LocationSource, AMap.OnCameraChangeListener, LocationService.OnLocationChangeListener {
 
@@ -70,6 +61,15 @@ public class MainActivity extends AppCompatActivity implements LocationSource, A
             }
             mGDMap.addPolyline(new PolylineOptions().addAll(latLngs).width(5).color(ActivityCompat.getColor(this, R.color.colorAccent)));
         }
+
+        // 判断是否登录
+        SharedPreferences sharedPreferences = getSharedPreferences("user", MODE_PRIVATE);
+        boolean isLogin = sharedPreferences.getBoolean("isLogin", false);
+        if (!isLogin) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
+
     }
 
     private void initMap(Bundle savedInstanceState) {

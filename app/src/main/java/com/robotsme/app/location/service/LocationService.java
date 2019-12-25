@@ -38,8 +38,8 @@ public class LocationService extends Service implements AMapLocationListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        locationDao = BaseDaoFactory.getInstance().getDao(LocationBean.class);
-        startLocation();
+//        locationDao = BaseDaoFactory.getInstance().getDao(LocationBean.class);
+//        startLocation();
     }
 
     @Override

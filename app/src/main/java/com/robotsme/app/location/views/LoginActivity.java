@@ -2,7 +2,9 @@ package com.robotsme.app.location.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.KeyEvent;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import com.robotsme.app.location.MainActivity;
 import com.robotsme.app.location.R;
+import com.robotsme.app.location.api.AUser;
 import com.robotsme.app.location.api.BaseApi;
 import com.robotsme.app.location.constract.IRequestCallback;
 import com.robotsme.app.location.utils.MLog;
@@ -53,27 +56,38 @@ public class LoginActivity extends AppCompatActivity {
         Map<String, Object> data = new HashMap<>();
         data.put("username", inputUsername.getText().toString());
         data.put("password", inputPassword.getText().toString());
-        BaseApi.getInstance().post("http://34.92.192.218:8000/auth", data, new IRequestCallback() {
+        new AUser().login(data, new IRequestCallback() {
             @Override
             public void onSuccess(ResponseBody responseBody) {
-                Intent intent = new Intent(getApplication(), MainActivity.class);
-                startActivity(intent);
+                try {
+                    SharedPreferences sharedPreferences = getApplication().getSharedPreferences("user", MODE_PRIVATE);
+                    MLog.i("登录成功");
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("isLogin", true);
+                    editor.putLong("loginAt", System.currentTimeMillis());
+                    editor.apply();
+
+                    startActivity(new Intent(getApplication(), MainActivity.class));
+                    finish();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onFailure(IOException e) {
-                System.out.println("on failure");
                 ToastUtil.show(getApplication(), "登录失败");
             }
 
             @Override
             public void willStart() {
-                System.out.println("start");
+
             }
 
             @Override
             public void finished() {
-                System.out.println("finished");
+
             }
         });
     }
