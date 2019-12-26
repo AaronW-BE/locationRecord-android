@@ -5,10 +5,12 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.robotsme.app.location.constract.IRequestCallback;
+import com.robotsme.app.location.utils.QueryString;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import okhttp3.Call;
@@ -33,28 +35,31 @@ public class BaseApi {
         return instance;
     }
 
-    public void get(String url, RequestBody body) {
+    public void get(String url, Map<String, String> data, final IRequestCallback requestCallback) throws UnsupportedEncodingException {
+        String queryString = QueryString.build(data);
+        url = "?" + queryString;
+
         Request request = new Request.Builder()
                 .url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-
+                e.printStackTrace();
+                requestCallback.onFailure(e);
+                requestCallback.finished();
             }
 
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-                    Headers responseHeaders = response.headers();
-                    for (int i = 0, size = responseHeaders.size(); i < size; i++) {
-                        System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-                    }
-
-                    System.out.println(responseBody.string());
+                ResponseBody responseBody = response.body();
+                if (!response.isSuccessful()) {
+                    requestCallback.onFailure(new IOException("response is not successful"));
+                    requestCallback.finished();
+                    return;
                 }
+                requestCallback.onSuccess(responseBody);
+                requestCallback.finished();
             };
         });
     }
