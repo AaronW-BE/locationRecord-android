@@ -5,7 +5,6 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.robotsme.app.location.constract.IRequestCallback;
-import com.robotsme.app.location.utils.MLog;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -99,6 +98,46 @@ public class BaseApi {
                 requestCallback.finished();
             }
         });
+    }
+
+    public void put(String url, Map<String, Object> data, final IRequestCallback requestCallback) {
+        FormBody.Builder builder = new FormBody.Builder();
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            builder.add(entry.getKey(), (String) entry.getValue());
+        }
+
+        RequestBody formBody = builder.build();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .put(formBody)
+                .build();
+
+        requestCallback.willStart();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                requestCallback.onFailure(e);
+
+                requestCallback.finished();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                ResponseBody responseBody = response.body();
+
+                if (!response.isSuccessful()) {
+                    requestCallback.onFailure(new IOException("response is not successful"));
+                    requestCallback.finished();
+                    return;
+                }
+                requestCallback.onSuccess(responseBody);
+                requestCallback.finished();
+            }
+        });
+
     }
 }
 
