@@ -22,6 +22,8 @@ import com.robotsme.app.location.utils.MLog;
 import com.robotsme.app.location.utils.ToastUtil;
 
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,16 +62,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(ResponseBody responseBody) {
                 try {
+                    JSONObject jsonObject = new JSONObject(responseBody.string());
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    String token = data.getString("token");
                     SharedPreferences sharedPreferences = getApplication().getSharedPreferences("user", MODE_PRIVATE);
                     MLog.i("登录成功");
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putBoolean("isLogin", true);
                     editor.putLong("loginAt", System.currentTimeMillis());
+                    editor.putString("token", token);
                     editor.apply();
-
                     startActivity(new Intent(getApplication(), MainActivity.class));
                     finish();
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -90,5 +94,9 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void handleRegister(View view) {
+        Toast.makeText(this, "暂不支持", Toast.LENGTH_SHORT).show();
     }
 }
