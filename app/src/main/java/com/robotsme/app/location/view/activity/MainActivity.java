@@ -12,9 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.view.KeyEvent;
+import android.view.View;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
@@ -119,11 +122,29 @@ public class MainActivity extends BaseActivity implements LocationSource, AMap.O
             case PERMISSION_LOCATION_CODE:
                 if (PackageManager.PERMISSION_GRANTED == grantResults[0]) {
                     startLocateService();
+                } else {
+                    showSnackbar(mMapView, "使用足迹需要定位权限，现在去添加？", "确定", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            goSetting();
+                        }
+                    });
                 }
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
                 break;
+        }
+    }
+
+    private void goSetting() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", mContext.getPackageName(), null);
+        intent.setData(uri);
+        try {
+            mContext.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

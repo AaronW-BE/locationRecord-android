@@ -29,5 +29,9 @@ public abstract class BasePresenter<V extends IBaseView, M extends BaseModel> {
         }
     }
 
+    protected void handleCode(int code) {
+
+    }
+
     public abstract M createModel();
 }

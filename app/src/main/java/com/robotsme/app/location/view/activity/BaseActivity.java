@@ -5,12 +5,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.robotsme.app.location.model.BaseModel;
 import com.robotsme.app.location.presenter.BasePresenter;
 import com.robotsme.app.location.view.IBaseView;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 public abstract class BaseActivity<V extends IBaseView, M extends BaseModel, P extends BasePresenter<V, M>> extends AppCompatActivity{
 
@@ -27,7 +28,13 @@ public abstract class BaseActivity<V extends IBaseView, M extends BaseModel, P e
     }
 
     public void showToast(String msg) {
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    protected void showSnackbar(View view, String msg, String action, View.OnClickListener onClickListener) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_SHORT)
+                .setAction(action, onClickListener)
+                .show();
     }
 
     public void showView(View view) {

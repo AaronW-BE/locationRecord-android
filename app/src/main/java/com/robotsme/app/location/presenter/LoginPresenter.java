@@ -1,5 +1,6 @@
 package com.robotsme.app.location.presenter;
 
+import com.robotsme.app.location.api.IHttpBack;
 import com.robotsme.app.location.bean.BaseEntity;
 import com.robotsme.app.location.bean.LoginBean;
 import com.robotsme.app.location.model.LoginModel;
@@ -27,7 +28,7 @@ public class LoginPresenter extends BasePresenter<ILoginView, LoginModel> {
     }
 
     public void login(String username, String password) {
-        mModel.login(username, password, new Callback() {
+        mModel.login(username, password, new IHttpBack() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 if (mReference == null) {

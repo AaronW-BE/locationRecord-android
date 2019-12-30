@@ -9,10 +9,12 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.robotsme.app.location.R;
 import com.robotsme.app.location.model.LoginModel;
 import com.robotsme.app.location.presenter.LoginPresenter;
+import com.robotsme.app.location.utils.MLog;
 import com.robotsme.app.location.utils.SharedPreferencesUtil;
 import com.robotsme.app.location.view.ILoginView;
 
@@ -21,6 +23,7 @@ public class LoginActivity extends BaseActivity<ILoginView, LoginModel, LoginPre
     private EditText usernameEt;
     private EditText passwordEt;
     private Button loginBtn;
+    private TextView registerTv;
 
     private SharedPreferencesUtil spu;
 
@@ -39,7 +42,9 @@ public class LoginActivity extends BaseActivity<ILoginView, LoginModel, LoginPre
         usernameEt = findViewById(R.id.login_username);
         passwordEt = findViewById(R.id.login_password);
         loginBtn = findViewById(R.id.login_btn);
+        registerTv = findViewById(R.id.login_register_tv);
         loginBtn.setOnClickListener(this);
+        registerTv.setOnClickListener(this);
 
         usernameEt.setText("aaronwb");
         passwordEt.setText("123456");
@@ -63,6 +68,10 @@ public class LoginActivity extends BaseActivity<ILoginView, LoginModel, LoginPre
                 }
                 mPresenter.login(username, pwd);
                 break;
+            //注册
+            case R.id.login_register_tv:
+                startActivity(new Intent(mContext, RegisterActivity.class));
+                break;
         }
     }
 
@@ -77,5 +86,4 @@ public class LoginActivity extends BaseActivity<ILoginView, LoginModel, LoginPre
     public void failedView(String msg, int tag, boolean isRefresh) {
         showToast(msg);
     }
-
 }

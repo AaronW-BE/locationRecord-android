@@ -5,39 +5,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".view.activity.LoginActivity">
+    tools:context=".view.activity.RegisterActivity">
 
     <EditText
-        android:id="@+id/login_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入手机号"
+        android:textSize="@dimen/normal_text_size"
         android:inputType="number"
-        android:maxLength="11"
-        android:textSize="14sp"/>
+        android:maxLength="11"/>
 
     <EditText
-        android:id="@+id/login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="请输入密码"
-        android:inputType="textPassword"
-        android:textSize="14sp"/>
+        android:textSize="@dimen/normal_text_size"
+        android:inputType="textPassword"/>
 
-    <TextView
-        android:id="@+id/login_register_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="注册"
-        android:layout_gravity="right"
-        android:paddingLeft="@dimen/view_padding"
-        android:paddingRight="@dimen/view_padding"
-        android:paddingTop="@dimen/view_margin"
-        android:paddingBottom="@dimen/view_margin"/>
-
-    <Button
-        android:id="@+id/login_btn"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="登录"/>
+        android:hint="请再输入一次密码"
+        android:textSize="@dimen/normal_text_size"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="注册"/>
 </LinearLayout>
