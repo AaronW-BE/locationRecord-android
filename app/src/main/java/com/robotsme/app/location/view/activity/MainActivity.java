@@ -34,6 +34,7 @@ import com.robotsme.app.location.bean.LocationBean;
 import com.robotsme.app.location.presenter.BasePresenter;
 import com.robotsme.app.location.service.LocationBinder;
 import com.robotsme.app.location.service.LocationService;
+import com.robotsme.app.location.utils.MLog;
 import com.zsd.android.dblib.db.BaseDao;
 import com.zsd.android.dblib.db.BaseDaoFactory;
 

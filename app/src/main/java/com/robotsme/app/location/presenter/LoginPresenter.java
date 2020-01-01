@@ -46,6 +46,8 @@ public class LoginPresenter extends BasePresenter<ILoginView, LoginModel> {
                     String jsonStr = response.body().string();
                     BaseEntity<LoginBean> loginBeanBaseEntity = GsonUtil.parseBaseEntity(jsonStr, LoginBean.class);
                     getView().showViewLogin(loginBeanBaseEntity.getData().getToken());
+                } else {
+
                 }
             }
         });

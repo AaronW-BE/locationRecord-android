@@ -27,13 +27,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.activity.RegisterActivity"></activity>
-        <activity android:name=".view.activity.LoginActivity">
+        <activity android:name=".view.activity.StartActivity"
+            android:theme="@style/StyleStartBg">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".view.activity.RegisterActivity" />
+        <activity android:name=".view.activity.LoginActivity">
         </activity>
 
         <service
@@ -41,11 +44,11 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".view.activity.MainActivity"></activity>
+        <activity android:name=".view.activity.MainActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="cd19098050f993401b7543792805b2b8" />
+            android:value="b211dcd699de6b7aca48cf7d9787df8d" />
 
         <service android:name="com.amap.api.location.APSService" />
     </application>

@@ -3,7 +3,10 @@ package com.robotsme.app.location.utils;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
+import com.robotsme.app.location.api.ParameterizedTypeImpl;
 import com.robotsme.app.location.bean.BaseEntity;
+
+import java.lang.reflect.Type;
 
 public class GsonUtil {
 
@@ -11,10 +14,8 @@ public class GsonUtil {
         if (TextUtils.isEmpty(jsonStr)) {
             return null;
         }
-        BaseEntity<T> baseEntity = new BaseEntity<>();
         Gson gson = new Gson();
-        T data = gson.fromJson(jsonStr, clazz);
-        baseEntity.setData(data);
-        return baseEntity;
+        Type type = new ParameterizedTypeImpl(BaseEntity.class, new Class[]{clazz});
+        return gson.fromJson(jsonStr, type);
     }
 }
